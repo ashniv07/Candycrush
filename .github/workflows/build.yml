@@ -26,32 +26,7 @@ jobs:
       - name: NPM Install
         run: npm install # Add your specific npm install command
 
-      # Docker Build and Push
-      - name: Docker Build and Push
-        run: |
-          docker build -t candy-crush .
-          docker tag candy-crush ashnivi/candy-crush:latest
-          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
-          docker push ashnivi/candy-crush:latest
-        env:
-          DOCKER_CLI_ACI: 1
-
-      # - name: Trivy image scan
-      #   run: trivy image ashnivi/candycrush:latest # Add Trivy scan command here
-
-      # Optional: Install and run Trivy for image scanning
-      # Uncomment if you want to add Trivy to scan for vulnerabilities in the Docker image
-      # - name: Install Trivy
-      #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install -y wget apt-transport-https gnupg lsb-release
-      #     wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-      #     echo "deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
-      #     sudo apt-get update
-      #     sudo apt-get install -y trivy
-
-      # - name: Run Trivy scan
-      #   run: trivy fs . > trivyfs.txt
+      
   deploy:
    needs: build
    runs-on: [self-hosted]
