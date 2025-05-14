@@ -36,6 +36,9 @@ jobs:
         env:
           DOCKER_CLI_ACI: 1
 
+      - name: Trivy image scan
+        run: trivy image ashnivi/candycrush:latest # Add Trivy scan command here
+
       # Optional: Install and run Trivy for image scanning
       # Uncomment if you want to add Trivy to scan for vulnerabilities in the Docker image
       # - name: Install Trivy
