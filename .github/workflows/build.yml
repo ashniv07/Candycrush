@@ -58,7 +58,18 @@ jobs:
    steps:
       - name: docker pull image
         run: docker pull ashnivi/candy-crush:latest
+
+      - name: Install Trivy
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget apt-transport-https gnupg lsb-release
+          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+          echo "deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
+          sudo apt-get update
+          sudo apt-get install -y trivy
+          
       - name: Image scan
         run: trivy image ashnivi/candy-crush:latest > trivyimagedeploy.txt
       - name: Deploy to container
         run: docker run -d --name game -p 3000:3000 ashnivi/candy-crush:latest
+
