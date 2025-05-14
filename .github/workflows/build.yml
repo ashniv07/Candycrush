@@ -64,3 +64,24 @@ jobs:
       - name: Deploy to container
         run: docker run -d --name game -p 3000:3000 ashnivi/candy-crush:latest
 
+      - name: Send Email Notification
+        if: always()  # Ensure it sends the email regardless of job status
+        run: |
+          echo "Sending email notification"
+          echo "Subject: GitHub Action Status - ${{ job.status }}" > email.txt
+          echo "From: ${{ secrets.SMTP_USERNAME }}" >> email.txt
+          echo "To: ${{ secrets.RECIPIENT_EMAIL }}" >> email.txt
+          echo "This is an automated notification of the status of the GitHub Actions workflow." >> email.txt
+          echo "Job Status: ${{ job.status }}" >> email.txt
+          
+          # Send the email using SMTP
+          sendmail -S ${{ secrets.SMTP_SERVER }} -p ${{ secrets.SMTP_PORT }} \
+            -f "${{ secrets.SMTP_USERNAME }}" -t "${{ secrets.RECIPIENT_EMAIL }}" \
+            -u "GitHub Action Status - ${{ job.status }}" -m "$(cat email.txt)"
+        env:
+          SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          SMTP_SERVER: ${{ secrets.SMTP_SERVER }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
+
