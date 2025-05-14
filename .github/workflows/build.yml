@@ -36,8 +36,8 @@ jobs:
         env:
           DOCKER_CLI_ACI: 1
 
-      - name: Trivy image scan
-        run: trivy image ashnivi/candycrush:latest # Add Trivy scan command here
+      # - name: Trivy image scan
+      #   run: trivy image ashnivi/candycrush:latest # Add Trivy scan command here
 
       # Optional: Install and run Trivy for image scanning
       # Uncomment if you want to add Trivy to scan for vulnerabilities in the Docker image
@@ -52,3 +52,13 @@ jobs:
 
       # - name: Run Trivy scan
       #   run: trivy fs . > trivyfs.txt
+  deploy:
+   needs: build
+   runs-on: ubuntu-latest
+   steps:
+      - name: docker pull image
+        run: docker pull ashnivi/candycrush:latest
+      - name: Image scan
+        run: trivy image ashnivi/candycrush:latest > trivyimagedeploy.txt
+      - name: Deploy to container
+        run: docker run -d --name game -p 3000:3000 ashnivi/candycrush:latest
