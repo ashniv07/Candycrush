@@ -9,7 +9,7 @@ on:
 jobs:
   build:
     name: Build
-    runs-on: [self-hosted]
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
         with:
@@ -37,15 +37,16 @@ jobs:
       #     sudo apt-get update
       #     sudo apt-get install -y trivy
 
+      
       # - name: Install Trivy
       #   run: trivy fs . &gt; trivyfs.txt
 
-      - name: Docker build and push
+      - name: Docker Build and push
         run: |
-          docker build -t candycrush .
-          docker tag candycrush ashnivi/candycrush:latest
+          docker build -t tic-tac-toe .
+          docker tag tic-tac-toe ashnivi/tic-tac-toe:latest
           docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-          docker push ashnivi/candycrush:latest
+          docker push ashnivi/tic-tac-toe:latest
         env:
           DOCKER_CLI_ACI: 1
 
