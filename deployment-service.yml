@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: candycrush
-        image: ashnivi/candycrush:latest
+        image: ashnivi/candy-crush:latest
         ports:
         - containerPort: 3000   # Use port 3000
 
