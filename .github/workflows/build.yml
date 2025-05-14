@@ -26,6 +26,33 @@ jobs:
       - name: NPM Install
         run: npm install # Add your specific npm install command
 
+      - name: Install msmtp
+        run: sudo apt-get update && sudo apt-get install -y msmtp
+
+      - name: Send Email Notification
+        if: always()  # Send email regardless of job status
+        run: |
+          echo "Sending email..."
+          cat <<EOF > ~/.msmtprc
+          defaults
+          auth on
+          tls on
+          tls_trust_file /etc/ssl/certs/ca-certificates.crt
+          logfile ~/.msmtp.log
+      
+          account default
+          host ${{ secrets.SMTP_SERVER }}
+          port ${{ secrets.SMTP_PORT }}
+          from ${{ secrets.SMTP_USERNAME }}
+          user ${{ secrets.SMTP_USERNAME }}
+          password ${{ secrets.SMTP_PASSWORD }}
+          EOF
+      
+          chmod 600 ~/.msmtprc
+      
+          echo -e "Subject: GitHub Action Status - ${{ job.status }}\n\nThe workflow has completed with status: ${{ job.status }}" | msmtp "${{ secrets.RECIPIENT_EMAIL }}"
+
+
       
   deploy:
    needs: build
