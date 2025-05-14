@@ -5,29 +5,39 @@ on:
     branches:
       - main
 
-
 jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+
     steps:
+      # Checkout the repository
       - uses: actions/checkout@v2
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          fetch-depth: 0  # Shallow clones should be disabled for better relevancy of analysis
+
+      # SonarQube Scan Action (you can uncomment it if using SonarQube)
       - uses: sonarsource/sonarqube-scan-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-      # If you wish to fail your job when the Quality Gate is red, uncomment the
-      # following lines. This would typically be used to fail a deployment.
-      # - uses: sonarsource/sonarqube-quality-gate-action@master
-      #   timeout-minutes: 5
-      #   env:
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
+      # NPM Install step (for Node.js projects)
       - name: NPM Install
         run: npm install # Add your specific npm install command
 
+      # Docker Build and Push
+      - name: Docker Build and Push
+        run: |
+          docker build -t candy-crush .
+          docker tag candy-crush ashnivi/candy-crush:latest
+          echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+          docker push ashnivi/candy-crush:latest
+        env:
+          DOCKER_CLI_ACI: 1
+
+      # Optional: Install and run Trivy for image scanning
+      # Uncomment if you want to add Trivy to scan for vulnerabilities in the Docker image
       # - name: Install Trivy
       #   run: |
       #     sudo apt-get update
@@ -37,17 +47,5 @@ jobs:
       #     sudo apt-get update
       #     sudo apt-get install -y trivy
 
-      
-      # - name: Install Trivy
-      #   run: trivy fs . &gt; trivyfs.txt
-
-      - name: Docker Build and push
-        run: |
-          docker build -t tic-tac-toe .
-          docker tag tic-tac-toe ashnivi/tic-tac-toe:latest
-          docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
-          docker push ashnivi/tic-tac-toe:latest
-        env:
-          DOCKER_CLI_ACI: 1
-
-
+      # - name: Run Trivy scan
+      #   run: trivy fs . > trivyfs.txt
