@@ -29,6 +29,5 @@ jobs:
         run: npm install # Add your specific npm install command
 
       - name: Install Trivy
-        run: |
-            trivy fs . &gt; trivyfs.txt
+        run: trivy fs . > tr
 
