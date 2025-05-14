@@ -44,7 +44,7 @@ jobs:
         run: |
           docker build -t candycrush .
           docker tag candycrush ashnivi/candycrush:latest
-          docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+          echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
           docker push ashnivi/candycrush:latest
         env:
           DOCKER_CLI_ACI: 1
