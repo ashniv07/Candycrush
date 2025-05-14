@@ -8,7 +8,7 @@ on:
 jobs:
   build:
     name: Build
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted]
 
     steps:
       # Checkout the repository
@@ -54,7 +54,7 @@ jobs:
       #   run: trivy fs . > trivyfs.txt
   deploy:
    needs: build
-   runs-on: ubuntu-latest
+   runs-on: [self-hosted]
    steps:
       - name: docker pull image
         run: docker pull ashnivi/candy-crush:latest
