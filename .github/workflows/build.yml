@@ -57,8 +57,8 @@ jobs:
    runs-on: ubuntu-latest
    steps:
       - name: docker pull image
-        run: docker pull ashnivi/candycrush:latest
+        run: docker pull ashnivi/candy-crush:latest
       - name: Image scan
-        run: trivy image ashnivi/candycrush:latest > trivyimagedeploy.txt
+        run: trivy image ashnivi/candy-crush:latest > trivyimagedeploy.txt
       - name: Deploy to container
-        run: docker run -d --name game -p 3000:3000 ashnivi/candycrush:latest
+        run: docker run -d --name game -p 3000:3000 ashnivi/candy-crush:latest
